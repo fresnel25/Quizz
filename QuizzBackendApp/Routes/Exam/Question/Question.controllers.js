@@ -64,13 +64,13 @@ const getQuestion = async(req, res)=>{
 
 const CreateQuestion = async(req, res) =>{
     try{
-        const {titre, CategoryId} = req.body
+        const {titre, topicId} = req.body
         const question = await prisma.question.create({
             data:{
                 titre:titre,
-                category:{
+                topic:{
                     connect:{
-                        id:CategoryId
+                        id:topicId
                     }
                 }
             }
@@ -91,7 +91,7 @@ const CreateQuestion = async(req, res) =>{
 const UpdateQuestion = async(req, res)=>{
     try{
         const{id} = req.params
-        const {titre, CategoryId} = req.body
+        const {titre, topicId} = req.body
 
         const question = await prisma.question.update({
             where:{
@@ -99,9 +99,9 @@ const UpdateQuestion = async(req, res)=>{
             },
             data:{
                 titre: titre,
-                category:{
+                topic:{
                     connect:{
-                        id:CategoryId
+                        id:topicId
                     }
                 }
             }

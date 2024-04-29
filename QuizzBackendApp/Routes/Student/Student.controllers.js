@@ -85,7 +85,6 @@ const login = async (req, res) => {
   }
 };
 
-
 const getAllStudent = async (req, res) => {
   try {
     const allStudents = await prisma.student.findMany({
@@ -128,7 +127,7 @@ const getSingleStudent = async(req, res) =>{
         message: error.message
       })
     }
-}
+};
 
 
 

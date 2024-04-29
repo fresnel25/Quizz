@@ -3,9 +3,9 @@ const { CreateQuestion, getQuestion, UpdateQuestion, getAllQuestion } = require(
 
 const QuestionRouter = express.Router()
 
-QuestionRouter.post("/register", CreateQuestion);
-QuestionRouter.get("/", getAllQuestion);
-QuestionRouter.put("/:id", UpdateQuestion);
-QuestionRouter.get("/:id", getQuestion)
+QuestionRouter.post("/create", CreateQuestion);
+QuestionRouter.get("/read", getAllQuestion);
+QuestionRouter.get("/read:id", getQuestion)
+QuestionRouter.put("/update:id", UpdateQuestion);
 
 module.exports = QuestionRouter

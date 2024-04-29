@@ -1,17 +1,21 @@
 const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 
-const getAllExam = async (req, res) => {
+const getAlltopic = async (req, res) => {
   try {
-    const Allexam = await prisma.exam.findMany({
+    const Alltopic = await prisma.topic.findMany({
       include: {
-        topics: true,
-        studentExams: true,
+        questions: true,
+        exam: {
+          select: {
+            titre: true,
+          },
+        },
       },
     });
     return res.status(200).json({
       success: true,
-      Allexam: Allexam,
+      Alltopic: Alltopic,
     });
   } catch (error) {
     return res.status(500).json({
@@ -21,27 +25,31 @@ const getAllExam = async (req, res) => {
   }
 };
 
-const getExam = async (req, res) => {
+const gettopic = async (req, res) => {
   try {
     const { id } = req.params;
-    const exam = await prisma.exam.findUnique({
+    const topic = await prisma.topic.findUnique({
       where: {
         id: parseInt(id),
       },
       include: {
-        topics: true,
-        studentExams: true,
+        questions: true,
+        exam: {
+          select: {
+            titre: true,
+          },
+        },
       },
     });
-    if (!exam) {
+    if (!topic) {
       return res.status(404).json({
         success: false,
-        message: "cette exam n'existe pas",
+        message: "cette topic n'existe pas",
       });
     }
     return res.status(200).json({
       success: true,
-      exam: exam,
+      topic: topic,
     });
   } catch (error) {
     return res.status(500).json({
@@ -51,17 +59,22 @@ const getExam = async (req, res) => {
   }
 };
 
-const CreateExam = async (req, res) => {
+const Createtopic = async (req, res) => {
   try {
-    const { titre } = req.body;
-    const exam = await prisma.exam.create({
+    const { titre, ExamId } = req.body;
+    const topic = await prisma.topic.create({
       data: {
         titre: titre,
+        topic: {
+          connect: {
+            id: ExamId,
+          },
+        },
       },
     });
     return res.status(200).json({
       success: true,
-      exam: exam,
+      topic: topic,
     });
   } catch (error) {
     return res.status(500).json({
@@ -71,22 +84,27 @@ const CreateExam = async (req, res) => {
   }
 };
 
-const UpdateExam = async (req, res) => {
+const Updatetopic = async (req, res) => {
   try {
     const { id } = req.params;
-    const { titre } = req.body;
+    const { titre, ExamId } = req.body;
 
-    const exam = await prisma.exam.update({
+    const topic = await prisma.topic.update({
       where: {
         id: parseInt(id),
       },
       data: {
         titre: titre,
+        topic: {
+          connect: {
+            id: ExamId,
+          },
+        },
       },
     });
     return res.status(200).json({
       success: true,
-      exam: exam,
+      topic: topic,
     });
   } catch (error) {
     res.status(500).json({
@@ -96,32 +114,31 @@ const UpdateExam = async (req, res) => {
   }
 };
 
-const DeleteExam = async (req, res) => {
+const Deletetopic = async (req, res) => {
   try {
     const { id } = req.params;
-    const exam = await prisma.exam.findUnique({
+    const topic = await prisma.topic.findUnique({
       where: {
         id: parseInt(id),
       },
       include: {
-        topics: true,
-        studentExams: true,
+        questions: true,
       },
     });
-    if (!exam) {
+    if (!topic) {
       return res.status(404).json({
         success: false,
-        message: "cette exam n'a pas été trouvée",
+        message: "cette topic n'a pas été trouvée",
       });
     }
-    await prisma.exam.delete({
+    await prisma.topic.delete({
       where: {
         id: parseInt(id),
       },
     });
     return res.status(200).json({
       success: true,
-      message: "exam supprimée avec succès",
+      message: "topic supprimée avec succès",
     });
   } catch (error) {
     return res.status(500).json({
@@ -132,9 +149,9 @@ const DeleteExam = async (req, res) => {
 };
 
 module.exports = {
-  getAllExam,
-  getExam,
-  CreateExam,
-  UpdateExam,
-  DeleteExam,
+  getAlltopic,
+  gettopic,
+  Createtopic,
+  Updatetopic,
+  Deletetopic,
 };
