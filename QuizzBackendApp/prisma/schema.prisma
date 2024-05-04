@@ -7,6 +7,30 @@ datasource db {
     url      = env("DATABASE_URL")
 }
 
+model school {
+    id       Int       @id @default(autoincrement())
+    name     String
+    filieres filiere[]
+    students student[]
+    exams    exam[]
+    topics   topic[]
+    createAt DateTime  @default(now())
+    updateAt DateTime  @updatedAt
+}
+
+model filiere {
+    id              Int              @id @default(autoincrement())
+    name            String
+    school school @relation(fields: [schoolId], references: [id])
+    schoolId Int
+    students        student[]
+    exams           exam[]
+    topics          topic[]
+    teacherFilieres teacherFiliere[]
+    createAt        DateTime         @default(now())
+    updateAt        DateTime         @updatedAt
+}
+
 model user {
     id       Int      @id @default(autoincrement())
     nom      String?
@@ -17,18 +41,46 @@ model user {
     updateAt DateTime @updatedAt
 }
 
+model teacher {
+    id              Int              @id @default(autoincrement())
+    nom             String?
+    prenom          String?
+    email           String           @unique
+    password        String
+    sexe            String
+    titre           String
+    teacherFilieres teacherFiliere[]
+    createAt        DateTime         @default(now())
+    updateAt        DateTime         @updatedAt
+}
+
 model student {
     id           Int            @id @default(autoincrement())
     nom          String?
     prenom       String?
     email        String         @unique
     password     String
-    status       Boolean @default(true)
+    status       Boolean        @default(true)
     studentExams studentExam[]
     studentTopic studentTopic[]
     payExams     payExam[]
+    filiere      filiere        @relation(fields: [filiereId], references: [id])
+    filiereId    Int
     createAt     DateTime       @default(now())
     updateAt     DateTime       @updatedAt
+    school       school?        @relation(fields: [schoolId], references: [id])
+    schoolId     Int?
+}
+
+model teacherFiliere {
+    id          Int      @id @default(autoincrement())
+    name_course String
+    teacher     teacher  @relation(fields: [teacherId], references: [id])
+    teacherId   Int
+    filiere     filiere  @relation(fields: [filiereId], references: [id])
+    filiereId   Int
+    createAt    DateTime @default(now())
+    updateAt    DateTime @updatedAt
 }
 
 model exam {
@@ -37,10 +89,14 @@ model exam {
     total_point  Float
     Start_Date   DateTime
     End_Date     DateTime
+    filiere      filiere       @relation(fields: [filiereId], references: [id])
+    filiereId    Int
     studentExams studentExam[]
     topics       topic[]
     createAt     DateTime      @default(now())
     updateAt     DateTime      @updatedAt
+    school       school?       @relation(fields: [schoolId], references: [id])
+    schoolId     Int?
 }
 
 model topic {
@@ -55,6 +111,10 @@ model topic {
     studentTopic studentTopic[]
     createAt     DateTime       @default(now())
     updateAt     DateTime       @updatedAt
+    school       school?        @relation(fields: [schoolId], references: [id])
+    schoolId     Int?
+    filiere      filiere?       @relation(fields: [filiereId], references: [id])
+    filiereId    Int?
 }
 
 model question {
@@ -84,7 +144,7 @@ model studentExam {
     exam       exam     @relation(fields: [ExamId], references: [id])
     ExamId     Int
     point_exam Float
-    status     Boolean @default(true)
+    status     Boolean  @default(true)
     createAt   DateTime @default(now())
     updateAt   DateTime @updatedAt
 }
@@ -96,7 +156,7 @@ model studentTopic {
     topic      topic    @relation(fields: [TopicId], references: [id])
     TopicId    Int
     point_exam Float
-    status     Boolean @default(true)
+    status     Boolean  @default(true)
     createAt   DateTime @default(now())
     updateAt   DateTime @updatedAt
 }
